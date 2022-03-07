@@ -21,9 +21,6 @@ import pySpriteWorld.glo
 from search.grid2D import ProblemeGrid2D
 from search import probleme
 
-
-
-
 # ---- ---- ---- ---- ---- ----
 # ---- Misc                ----
 # ---- ---- ---- ---- ---- ----
@@ -105,11 +102,19 @@ def main():
     #-------------------------------
     
     objectifs = goalStates
-    random.shuffle(objectifs)
-    print("Objectif joueur 0", objectifs[0])
-    print("Objectif joueur 1", objectifs[1])
-
-    
+    # random.shuffle(objectifs)
+    # print("Objectif joueur 0", objectifs[0])
+    # print("Objectif joueur 1", objectifs[1])
+    obj_milit  = {}
+    list_elec = []# Clé : electeur , Valeur : militants de parti affecté
+    militants_list = initStates.copy()
+    nb_militants = len(militants_list)
+    for i in range(nb_militants):
+        # Allouer aléatoirement un electeur à chaque militant
+        a = np.random.randint(0,5)
+        # list_elec.append((i,a))
+        obj_milit[i] = a        
+        
     #-------------------------------
     # Carte demo 
     # 2 joueurs 
@@ -126,57 +131,59 @@ def main():
     g =np.ones((nbLignes,nbCols),dtype=bool)  # par defaut la matrice comprend des True  
     for w in wallStates:            # putting False for walls
         g[w]=False
-    p = ProblemeGrid2D(initStates[0],objectifs[0],g,'manhattan')
-    path = probleme.astar(p)
-    print ("Chemin trouvé:", path)
-        
-    
-    #-------------------------------
-    # Boucle principale de déplacements 
-    #-------------------------------
-    
+    for j in range(nb_militants):
+        a = obj_milit[j]
+        p = ProblemeGrid2D(initStates[j],objectifs[a],g,'manhattan')
+        path = probleme.astar(p)
+        print ("Chemin trouvé:", path)
             
-    posPlayers = initStates
+        
+        #-------------------------------
+        # Boucle principale de déplacements 
+        #-------------------------------
+        
+                
+        posPlayers = initStates
 
-    for i in range(iterations):
-        
-        # on fait bouger chaque joueur séquentiellement
-        
-        # Joeur 0: suit son chemin trouve avec A* 
-        
-        row,col = path[i]
-        posPlayers[0]=(row,col)
-        players[0].set_rowcol(row,col)
-        print ("pos 0:", row,col)
-        if (row,col) == objectifs[0]:
-            print("le joueur 0 a atteint son but!")
-            break
-        
-        # Joueur 1: fait du random walk
-        
-        row,col = posPlayers[1]
-
-        while True: # tant que pas legal on retire une position
-            x_inc,y_inc = random.choice([(0,1),(0,-1),(1,0),(-1,0)])
-            next_row = row+x_inc
-            next_col = col+y_inc
-            if legal_position(next_row,next_col):
+        for i in range(iterations):
+            
+            # on fait bouger chaque joueur séquentiellement
+            
+            # Joueur 0: suit son chemin trouve avec A* 
+            
+            row,col = path[i]
+            posPlayers[j]=(row,col)
+            players[j].set_rowcol(row,col)
+            print ("pos :", row,col)
+            if (row,col) == objectifs[a]:
+                print("le joueur {} a atteint son but!".format(j))
                 break
-        players[1].set_rowcol(next_row,next_col)
-        print ("pos 1:", next_row,next_col)
-    
-        col=next_col
-        row=next_row
-        posPlayers[1]=(row,col)
+            """
+            # Joueur 1: fait du random walk
             
-        if (row,col) == objectifs[1]:
-            print("le joueur 1 a atteint son but!")
-            break
-            
-            
+            row,col = posPlayers[1]
+
+            while True: # tant que pas legal on retire une position
+                x_inc,y_inc = random.choice([(0,1),(0,-1),(1,0),(-1,0)])
+                next_row = row+x_inc
+                next_col = col+y_inc
+                if legal_position(next_row,next_col):
+                    break
+            players[1].set_rowcol(next_row,next_col)
+            print ("pos 1:", next_row,next_col)
         
-        # on passe a l'iteration suivante du jeu
-        game.mainiteration()
+            col=next_col
+            row=next_row
+            posPlayers[1]=(row,col)
+                
+            if (row,col) == objectifs[1]:
+                print("le joueur 1 a atteint son but!")
+                break
+                
+                
+            """
+            # on passe a l'iteration suivante du jeu
+            game.mainiteration()
 
                 
         

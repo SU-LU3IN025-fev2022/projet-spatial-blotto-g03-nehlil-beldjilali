@@ -184,7 +184,7 @@ def main():
 
     # Calculer le score de chaque parti
     score_parti1, score_parti2 = 0, 0
-    for (elec, militants) in elec_dic.items():
+    for (militants) in elec_dic.values():
         a, b = 0, 0
         for militant in militants:
             if militant < (nb_militants//2):
@@ -200,6 +200,7 @@ def main():
     print("le score du parti 1 : {}".format(score_parti1))
     print("le score du parti 2 : {}".format(score_parti2))
     print("Le partie qui a emporté la journée : {}".format('1' if score_parti1>score_parti2 else '2'))
+    print("-------------------------------------------------------------------------")
     # -------------------------------
 
 

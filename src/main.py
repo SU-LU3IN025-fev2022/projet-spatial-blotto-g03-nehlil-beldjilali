@@ -76,11 +76,13 @@ def main():
            
     # on localise tous les états initiaux (loc du joueur)
     # positions initiales des joueurs
+    # Retourne des couples (x,y) : positions des joueurs
     initStates = [o.get_rowcol() for o in players]
     print ("Init states:", initStates)
     
     # on localise tous les secteurs d'interet (les votants)
     # sur le layer ramassable
+    # Retourne des couples (x,y) : positions des votants
     goalStates = [o.get_rowcol() for o in game.layers['ramassable']]
     print ("Goal states:", goalStates)
     

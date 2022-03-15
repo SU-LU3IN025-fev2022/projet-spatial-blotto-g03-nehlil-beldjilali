@@ -144,7 +144,7 @@ def main():
 
             # on fait bouger chaque joueur séquentiellement
 
-            # Joueur 0: suit son chemin trouve avec A*
+            # Joueur j: suit son chemin trouve avec A*
 
             row, col = path[i]
             posPlayers[j] = (row, col)
@@ -178,7 +178,7 @@ def main():
                 
             """
             # on passe a l'iteration suivante du jeu
-            # game.mainiteration()
+            game.mainiteration()
 
     pygame.quit()
 

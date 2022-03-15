@@ -94,12 +94,10 @@ def main():
         # une position legale est dans la carte et pas sur un mur
         return ((row, col) not in wallStates) and row >= 0 and row < nbLignes and col >= 0 and col < nbCols
 
-    # -------------------------------
-    # Attributaion aleatoire des fioles
-    # -------------------------------
-
+    # Structures utilisées
     objectifs = goalStates
     nb_militants = len(initStates)
+    nb_milit_parti = nb_militants//2
     nb_obj = len(objectifs)    
     score = {1: 0, 2: 0}
     strategy1 = [0 for k in range(nb_obj)] # liste pour sauvegarder la strategie précédente du parti 1
@@ -118,16 +116,17 @@ def main():
         g[w] = False
 
     posPlayers = initStates
+
+    # Nom de stratégies pour chaque parti
+    nom_str1, nom_str2 = 'tetu_uniform', 'random'
+
     # Boucle principale des elections
     for jour in range(NBJOURS):
-        # Initialisation aléatoire des strateegies d'affectation
-        #obj_milit1,strategy1 = ut.init_alea_parti(nb_obj, nb_militants//2)
-        #obj_milit2,strategy2 = ut.init_alea_parti(nb_obj, nb_militants//2)
-        #obj_milit,strategy1, strategy2 = ut.init_alea(nb_obj, nb_militants)
-
-        strategy1 = ut.prochainCoup(historique[1],historique[2],'titfortat')
-        strategy2 = ut.prochainCoup(historique[2],historique[1],'aleatoire')
-        obj_milit = ut.str_to_obj(strategy1, nb_militants//2) +  ut.str_to_obj(strategy2, nb_militants//2)
+        # Initialisation des strateegies d'affectation
+        strategy1 = ut.prochainCoup(historique[1],historique[2],nom_str1)
+        strategy2 = ut.prochainCoup(historique[2],historique[1],nom_str2)
+        obj_milit = ut.str_to_obj(strategy1, nb_milit_parti) +  ut.str_to_obj(strategy2, nb_milit_parti)
+        # Sauvegarde de stratégies
         historique[1].append(strategy1)
         historique[2].append(strategy2)
         
@@ -140,9 +139,7 @@ def main():
             # -------------------------------
             # Boucle principale de déplacements
             # -------------------------------
-
             for i in range(iterations):
-
                 # on fait bouger chaque joueur séquentiellement
 
                 # Joueur militant: suit son chemin trouve avec A*
@@ -170,12 +167,12 @@ def main():
 
         # Affichage de score et de strategies
         print("-------------------------------------------------------------------------")
-        print("Strategie parti 1 : {}".format(strategy1))
-        print("Strategie parti 2 : {}".format(strategy2))
+        print("Strategie parti 1 ({}): {}".format(nom_str1,strategy1))
+        print("Strategie parti 2 ({}): {}".format(nom_str2,strategy2))
         print("-------------------------------------------------------------------------")
         print("le score du parti 1 : {}".format(score_parti1))
         print("le score du parti 2 : {}".format(score_parti2))
-        print("Le partie qui a emporté la journée : {}".format('1' if score_parti1 > score_parti2 else '2'))
+        print("Le partie qui a emporté la journée {}: {}".format(jour, '1' if score_parti1 > score_parti2 else '2'))
     
     # Affichage du score après la fin des elections
     print("-------------------------------------------------------------------------")
@@ -187,8 +184,6 @@ def main():
         print("---")
         print("str1:", str1)
         print("str2:", str2)
-
-    # -------------------------------
 
 if __name__ == '__main__':
     main()

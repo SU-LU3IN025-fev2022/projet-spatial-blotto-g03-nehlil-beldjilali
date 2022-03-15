@@ -1,22 +1,6 @@
 import random
 import numpy as np
 
-
-# Initialisation aléatoire 
-def init_alea(nb_obj, nb_militants):
-    strategie_p = []
-    strategie_p1 = [0 for k in range(nb_obj)]
-    strategie_p2 = [0 for k in range(nb_obj)]
-    for i in range(nb_militants):
-        # Allouer aléatoirement un electeur à chaque militant
-        obj = np.random.randint(0, nb_obj)
-        strategie_p.append(obj)
-        if i<nb_militants//2:
-            strategie_p1[obj]+=1
-        else:
-            strategie_p2[obj]+=1
-    return strategie_p, strategie_p1, strategie_p2
-
 def init_alea_parti(nb_obj, nb_militants):
     obj_militants = [0 for k in range(nb_militants)]
     strategy = [0 for k in range(nb_obj)]
@@ -68,7 +52,7 @@ def prochainCoup(mesCoups,adversCoups,nom):
     #
     # strategies de base
     #
-    if nom=='aleatoire':
+    if nom=='random':
         return init_alea_parti(nb_obj, nb_militants)
     
     if nom=='tetu':
@@ -77,11 +61,30 @@ def prochainCoup(mesCoups,adversCoups,nom):
         else:
             return mesCoups[-1]
     
+    if nom=='tetu_uniform':
+        if len(mesCoups)==0:
+            return init_uniforme(nb_obj, nb_militants)
+        else:
+            return mesCoups[-1]
+    
     if nom=='titfortat':
         if adversCoups == []:
             return init_alea_parti(nb_obj, nb_militants)
         else:
             return adversCoups[-1]
+    
+    if nom=='best_response':
+        if adversCoups == []:
+            return init_alea_parti(nb_obj, nb_militants)
+        else:
+            adv_str = adversCoups[-1]
+            idx_list = np.argsort(adv_str)[::-1]
+            new_strategy = [0 for k in range(nb_obj)]
+            for i in range(nb_obj):
+                if i<nb_obj//2: new_strategy[idx_list[i]] = 0
+                else: new_strategy[idx_list[i]] = adv_str[idx_list[i]]+1
+            new_strategy[idx_list[i]] += (nb_militants - sum(new_strategy))
+            return new_strategy
         
     if nom=='random':
         return random.choice(['t','c'])

@@ -35,7 +35,6 @@ import util as ut
 
 game = Game()
 
-
 def init(_boardname=None):
     global player, game
     name = _boardname if _boardname is not None else 'blottoMap'
@@ -47,7 +46,6 @@ def init(_boardname=None):
     player = game.player
 
 def main():
-
     # for arg in sys.argv:
     iterations = 100  # default
     if len(sys.argv) == 2:
@@ -104,7 +102,7 @@ def main():
     strategy2 = [0 for k in range(nb_obj)] # liste pour sauvegarder la strategie précédente du parti 2
     historique = {1:[], 2:[]}
 
-    NBJOURS = 3
+    NBJOURS = 10
     # -------------------------------
     # Carte demo
     # Tous les joueurs exécutent A*
@@ -118,7 +116,7 @@ def main():
     posPlayers = initStates
 
     # Nom de stratégies pour chaque parti
-    nom_str1, nom_str2 = 'tetu_uniform', 'random'
+    nom_str1, nom_str2 = ut.stochastique_expert(), ut.stochastique_expert()
 
     # Boucle principale des elections
     for jour in range(NBJOURS):
@@ -174,16 +172,18 @@ def main():
         print("le score du parti 2 : {}".format(score_parti2))
         print("Le partie qui a emporté la journée {}: {}".format(jour, '1' if score_parti1 > score_parti2 else '2'))
     
-    # Affichage du score après la fin des elections
-    print("-------------------------------------------------------------------------")
-    print("le score du parti 1 à la fin des elections: {}".format(score[1]))
-    print("le score du parti 2 à la fin des elections: {}".format(score[2]))
-    print("Le parti qui a emporté l'election : {}".format('1' if score[1] > score[2] else '2'))
     # Affichage de l'historique des stratégies
     for str1, str2 in zip(historique[1], historique[2]):
         print("---")
         print("str1:", str1)
         print("str2:", str2)
+    # Affichage du score après la fin des elections
+    print("-------------------------------------------------------------------------")
+    print("strategie parti 1: {} - stratégie parti 2: {}".format(nom_str1,nom_str2))
+    print("le score du parti 1 à la fin des elections: {}".format(score[1]))
+    print("le score du parti 2 à la fin des elections: {}".format(score[2]))
+    print("Le parti qui a emporté l'election : {}".format('1' if score[1] > score[2] else '2'))
 
+# Main
 if __name__ == '__main__':
     main()

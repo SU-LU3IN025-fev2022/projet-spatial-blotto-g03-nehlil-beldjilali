@@ -102,9 +102,14 @@ def main():
         # une position legale est dans la carte et pas sur un mur
         return ((row, col) not in wallStates) and row >= 0 and row < nbLignes and col >= 0 and col < nbCols
 
+    # Calcule le cout pour se déplacer d'un point à un autre
+    def cout_chemin(posPlayer, posTarget):
+        p = ProblemeGrid2D(posPlayer, posTarget, g, 'manhattan')
+        path = probleme.astar(p)
+        return len(path)
+
     # Structures utilisées
     objectifs = goalStates
-    # objectifs = [(1,1), (1,14), (1,18), (8,14), (8, 4)]
     nb_militants = len(initStates)
     nb_milit_parti = nb_militants//2
     nb_obj = len(objectifs)
@@ -125,12 +130,6 @@ def main():
 
     posPlayers = initStates
 
-    # Calcule le cout pour se déplacer d'un point à un autre
-    def cout_chemin(posPlayer, posTarget):
-        p = ProblemeGrid2D(posPlayer, posTarget, g, 'manhattan')
-        path = probleme.astar(p)
-        return len(path)
-
     # Nom de stratégies pour chaque parti
     nom_str1, nom_str2 = "focus", "better_response"
 
@@ -146,10 +145,6 @@ def main():
         # Sauvegarde de stratégies
         historique[1].append(strategy1)
         historique[2].append(strategy2)
-        
-        ft.updateMatProba(historique[2][-1], jour+1)
-        if jour > 5: print(ft.fictitious(historique[1],historique[2]))
-        
         
         for militant in range(nb_militants):
             obj = obj_milit[militant]
@@ -180,7 +175,6 @@ def main():
 
         # pygame.quit()
         # Reaffectation des electeurs sur les secteurs
-        """
         affec_alea,l = [],[]
         l = random.sample(range(10), 5)
         for el in l:
@@ -192,7 +186,7 @@ def main():
             s+=1
             o.set_rowcol(row, col)
         objectifs = [o.get_rowcol() for o in game.layers['ramassable']]
-        """
+        
         # Calculer le score de chaque parti en ce jour
         score_parti1, score_parti2 = ut.calcul_score_jour(strategy1, strategy2)
         # Sauvegarder le score journalier de chaque parti

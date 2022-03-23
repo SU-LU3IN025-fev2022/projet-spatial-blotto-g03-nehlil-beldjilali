@@ -57,6 +57,10 @@ def main():
 
     init()
 
+
+    # TO-DO
+    # Deuxième variante des elections avec budget dans ce fichier
+
     # -------------------------------
     # Initialisation
     # -------------------------------

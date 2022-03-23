@@ -81,7 +81,6 @@ def main():
     # on localise tous les secteurs d'interet (les votants)
     # sur le layer ramassable
     # Retourne des couples (x,y) : positions des votants
-    #pos_secteurs = [(1,1),(1,8),(1,18),(5,1),(11,1),(18,1),(18,8),(18,13),(5,18),(11,18)]
     pos_secteurs = {0:[(1,3),(1,4)],1:[(1,3),(8,11)],2:[(1,3),(15,18)],
                 3:[(5,9),(1,4)],4:[(5,9),(15,18)],5:[(11,14),(1,4)],
                 6:[(11,14),(15,18)],7:[(16,18),(1,6)],8:[(16,18),(8,11)],
@@ -96,7 +95,7 @@ def main():
     # on localise tous les murs
     # sur le layer obstacle
     wallStates = [w.get_rowcol() for w in game.layers['obstacle']]
-    print("Wall states:", wallStates)
+    # print("Wall states:", wallStates)
 
     def legal_position(row, col):
         # une position legale est dans la carte et pas sur un mur
@@ -104,7 +103,6 @@ def main():
 
     # Structures utilisées
     objectifs = goalStates
-    # objectifs = [(1,1), (1,14), (1,18), (8,14), (8, 4)]
     nb_militants = len(initStates)
     nb_milit_parti = nb_militants//2
     nb_obj = len(objectifs)
@@ -155,8 +153,6 @@ def main():
             obj = obj_milit[militant]
             p = ProblemeGrid2D(posPlayers[militant], objectifs[obj], g, 'manhattan')
             path = probleme.astar(p)
-            # print("Chemin trouvé:", path)
-            # print("cout du chemin: ",cout_chemin(posPlayers[militant], objectifs[obj]))
             # -------------------------------
             # Boucle principale de déplacements
             # -------------------------------
@@ -168,11 +164,9 @@ def main():
                 row, col = path[i]
                 posPlayers[militant] = (row, col)
                 players[militant].set_rowcol(row, col)
-                # print("pos :", row, col)
                 if (row, col) == objectifs[obj]:
                     # Si nouvelle position alors la sauvegarder
                     posPlayers[militant] = (row, col)
-                    # print("le joueur {} a atteint son but!".format(militant))
                     break
 
                 # on passe a l'iteration suivante du jeu
@@ -180,19 +174,6 @@ def main():
 
         # pygame.quit()
         # Reaffectation des electeurs sur les secteurs
-        """
-        affec_alea,l = [],[]
-        l = random.sample(range(10), 5)
-        for el in l:
-            pos = pos_secteurs[el]
-            affec_alea.append((random.randint(pos[0][0],pos[0][1]), random.randint(pos[1][0],pos[1][1])))
-        s = 0
-        for o in game.layers['ramassable']:
-            row, col = affec_alea[s]
-            s+=1
-            o.set_rowcol(row, col)
-        objectifs = [o.get_rowcol() for o in game.layers['ramassable']]
-        """
         # Calculer le score de chaque parti en ce jour
         score_parti1, score_parti2 = ut.calcul_score_jour(strategy1, strategy2)
         # Sauvegarder le score journalier de chaque parti
@@ -201,18 +182,14 @@ def main():
 
         # Affichage de score et des strategies
         print("-------------------------------------------------------------------------")
+        print("jour ", jour+1)
         print("Strategie parti 1 ({}): {}".format(nom_str1,strategy1))
         print("Strategie parti 2 ({}): {}".format(nom_str2,strategy2))
-        print("-------------------------------------------------------------------------")
+        print("---")
         print("le score du parti 1 : {}".format(score_parti1))
         print("le score du parti 2 : {}".format(score_parti2))
         print("Le partie qui a emporté la journée {}: {}".format(jour+1, '1' if score_parti1 > score_parti2 else '2'))
-    
-    # Affichage de l'historique des stratégies
-    for str1, str2 in zip(historique[1], historique[2]):
-        print("---")
-        print("str1:", str1)
-        print("str2:", str2)
+
     # Affichage du score après la fin des elections
     print("-------------------------------------------------------------------------")
     print("strategie parti 1: {} - stratégie parti 2: {}".format(nom_str1,nom_str2))

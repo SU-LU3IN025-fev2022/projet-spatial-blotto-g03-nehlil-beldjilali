@@ -20,10 +20,8 @@ def init_alea_parti(nb_obj, nb_militants_p):
 def init_uniform(nb_obj, nb_militants):
     affec_list = []
     q, r = nb_militants//nb_obj, nb_militants%nb_obj
-    for i in range(nb_obj):
-        affec_list.append(q)
-    for i in range(r):
-        affec_list[i] += 1
+    for i in range(nb_obj): affec_list.append(q)
+    for i in range(r): affec_list[i] += 1
     return affec_list
 
 # Retourne le score journalier des deux partis

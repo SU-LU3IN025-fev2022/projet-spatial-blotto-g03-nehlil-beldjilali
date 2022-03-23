@@ -1,8 +1,8 @@
 # Rapport de projet
 
 ## Groupe
-* XXX
-* YYY
+* Samy Mouloud NEHLIL
+* Amel BELDJILALI
 
 ## Description des choix importants d'implémentation
 

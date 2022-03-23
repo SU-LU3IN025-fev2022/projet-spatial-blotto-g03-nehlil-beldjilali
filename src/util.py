@@ -4,7 +4,6 @@ from math import *
 
 STRATEGIES = ["tetu_uniform", "focus", "tetu", "better_response","aleatoire","titfortat"]
 nb_obj, nb_militants = 5, 7
-matProb = [[0 for x in range(nb_militants+1)] for y in range(nb_obj)] 
 
 # Génère aléatoirement une stratégie pour un parti donné
 def init_alea_parti(nb_obj, nb_militants_p):
@@ -47,27 +46,7 @@ def str_to_obj(strategy, nb_militants_p):
 
 # Retourne aléatoirement une stratégie parmi celles implémentées
 def stochastique_expert():
-    return random.choice(["tetu_uniform", "focus", "tetu", "better_response","aleatoire","titfortat"])
-
-def initMatProb():
-    for i in range(nb_obj):
-        for j in range(nb_militants+1):
-            matProb[i][j] = 0
-
-def updateMatProba(strategy, jours_passes):
-    for i in range(len(strategy)):
-        j = strategy[i]
-        matProb[i][j] = (matProb[i][j]+1)/jours_passes
-
-def gain_espere(maStrategy):
-    gains = []
-    for electeur in range(nb_obj):
-        gain = 0
-        monCoup = maStrategy[electeur]
-        for j in range(0, monCoup+1):
-            gain += matProb[electeur][j]
-        gains.append(gain)
-    return gains
+    return random.choice(STRATEGIES)
 
 # Retourne le prochaine coup(stratégie) pour un parti
 def prochainCoup(mesCoups,adversCoups,nom):
@@ -117,11 +96,3 @@ def prochainCoup(mesCoups,adversCoups,nom):
         strategy.append(aff+res)
         for i in range(nb_obj-secteurs): strategy.append(0)
         return strategy
-    
-    if nom=='fictitious':
-        strategy = []
-        
-        return strategy
-
-    if nom=='random':
-        return random.choice(['aleatoire','tetu','titfortat','best_response'])

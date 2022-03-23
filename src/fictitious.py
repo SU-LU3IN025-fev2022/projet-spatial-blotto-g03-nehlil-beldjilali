@@ -28,4 +28,4 @@ def fictitious(mesCoups,adversCoups):
         strategy = ut.prochainCoup(mesCoups,adversCoups,nom_str)
         possible_strategies.append(strategy)
         gains.append(sum(gain_espere(strategy)))
-    return ut.STRATEGIES[np.argmax(gains)],possible_strategies[np.argmax(gains)]
+    return ut.STRATEGIES[np.argmax(gains)], possible_strategies[np.argmax(gains)]

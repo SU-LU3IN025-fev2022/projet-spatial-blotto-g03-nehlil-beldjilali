@@ -197,7 +197,7 @@ def main():
 
                 # on passe a l'iteration suivante du jeu
                 # Pour affichage, décommentez l'instruction suivante
-                # game.mainiteration()
+                game.mainiteration()
 
         # pygame.quit()
 

@@ -55,6 +55,27 @@ Variante 1: Chaque militant a son propre budget fixe qu'il ne doit pas dépasser
 
 Variante 2: Le budget concerne la campagne entière: chaque jour le parti paye comme prix la somme des trajets réalisés par ses militants dans la journée. Le but est donc de minimiser les distances parcourues par chaque militant.
 
+Afin de satisfaire ces conditions, on a implémenté les fonctions suivantes:
+
+III\ Dans le fichier budgetV1.py: Pour la première variante:        
+
+    1) reaffect(): Qui reaffecte les élécteurs à des secteurs différents à la fin de chaque journée. Pour cela, on stocke les positions possibles dans chaque secteur dans le tableau pos_secteur puis en utilisant la fonction randint du module random, pour chaque élécteur on choisit un secteur (différent de celui où il était le jour d'avant) aléatoirement et on le positionne dans ce secteur (position aléatoire dans le secteur).
+
+    2) cout_chemin(posPlayer, posTarget): Calcule le coût de déplacement -nombre de pas-  d'un militant d'une position initiale posPlayer à une position finale posTarget en utilisant la distance de manhattan.
+
+    3) pick_from_possible_moves(myPosition, myBudget): Choisit pour un militant donné situé à la position myPosition un élécteur parmi les élécteurs qu'il peut atteindre étant donné son budget myBudget et ceci en calculant le coût du chemin entre le militant et chaqun des élécteurs. Par exemple, si on a 5 élécteurs et que la fonction cout_chemin retourne 10, 15, 13, 6, 2 (les distances à parcourir pour chaque chemin), et sachant que myBudget = 12, on obtient le tableau suivangt: [0, 3, 4] (les indices des élécteurs que le militant peut atteindre avec son budget) puis on choisit un de ces élécteurs aléatoirement et on retourne la nouvelle position du militant (celle de l'élécteur qu'il a comme but). Si aucun élécteur n'est atteignable avec myBudget, le militant reste dans la même position.
+
+    4) strategy_with_budget(posPlayers, budget): Cette fonction retourne une stratégie aléatoire en affectant à chaque militant du parti un objectif (élécteur) aléatoire avec la fonction pick_from_possible_moves.
+
+IV\ Dans le fichier budgetV2.py: Pour la deuxième variante: 
+
+    On a gardé les fonctions reaffect(), cout_chemin(posPlayer, posTarget) pour la réaffectation des élécteurs dans de différents secteurs et le calcul du coût, et on rajoute la fonction suivante:
+
+    5) choose_nearest_obj(posPlayers): Cette fonction choisit l'objectif le plus proche pour chaque militant du parti en utilisant la fonction cout_chemin et ceci afin de minimiser le prix que le parti aura à payer à la fin de la journée. Afin de ne pas concentrer tous ses efforts sur le même secteur si tous les militants d'un parti se trouvent le plus proche d'un même élécteur, on rajoute la condition suivante: Ne pas affecter plus de trois militants au même élécteur.
+
+    Ensuite, on lance le jeu et à la finc de chaque jour on met à jour le budget du parti en lui rajoutant la somme des pas de chaque militant (le budget du partie 1 est sauvegardé dans la variable budget1 et celui du porti 2 dans la variable budget2 qui sont initialisée à 0 au début de la campagne).
+
+
 
 ## Description des résultats
 

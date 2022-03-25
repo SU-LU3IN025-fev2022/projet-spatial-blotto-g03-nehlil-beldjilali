@@ -78,5 +78,32 @@ IV\ Dans le fichier budgetV2.py: Pour la deuxième variante:
 
 
 ## Description des résultats
+Pour évaluer les différentes stratégies, on organise des confrontations. On répète ldes campagnes de 20 jours 30 fois et on observe les réseultats.
 
-Blablabla
+1) Tétu VS aléatoire: Sur les 30 campagnes:
+    Tétu a remporté le vote 10 fois.
+    Aléatoire a remporté le vote 19 fois.
+    Il y avait une seule fois où les deux stratégies ont eu le même score.
+
+2) Tit-for-tat VS aléatoire:
+    Tit-for-tat a remporté le vote 16 fois.
+    Aléatoire a remporté le vote 10 fois.
+    Il y avait 4 fois où les deux stratégies ont eu le même score.
+
+3) Better response VS tit-for-tat:
+    Better reponse a remporté le vote 16 fois.
+    Tit-for-tat a remporté le vote 11 fois.
+    Il y avait 3 fois où les deux stratégies ont eu le même score.
+
+4) Aléatoire VS better response: (sur 35 campagnes)
+    Aléatoire a remporté le vote 17 fois.
+    Better response a remporté le vote 13 fois.
+    Il y avait 5 fois où les deux stratégies ont eu le même score.
+
+En observant ces résultats, on peut déduire que:
+
+    - La stratégie tétu uniforme est meilleur que tétu aléatoire et donne de bons résultats contre les autres stratégies vu qu'elle distribue les militants d'une façon uniforme sur l'ensemble des élécteurs.
+
+    - La stratégie better response donne de bons résultats contre les stratégies stationnaire vu qu'elle prend l'historique de l'adversaire en compte.
+
+    -  

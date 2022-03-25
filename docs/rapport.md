@@ -100,10 +100,41 @@ Pour évaluer les différentes stratégies, on organise des confrontations. On r
     Better response a remporté le vote 13 fois.
     Il y avait 5 fois où les deux stratégies ont eu le même score.
 
+5) Fictitious Play VS better response:
+    Better response a gagné 30 fois sur 30 (100%).
+
+6) Fictitious Play VS stochastique expert:
+    Fictitious Play a remporté le vote 8 fois.
+    Stochastique expert a remporté le vote 21 fois.
+    Les deux stratégies ont eu le même score une seule fois.
+
+7) Better response VS stochastique expert:
+    Better response a remporté le vote 27 fois.
+    Stochastique expert a remporté le vote 3 fois.
+
+8) Tit-for-tat VS stochastique expert:
+    Tit-for-tat a remporté le vote 5 fois.
+    Stochastique expert a remporté le vote 19 fois.
+    Il y avait 6 fois où les deux stratégies ont eu le même score.
+
+9) Fictitious Play VS aléatoire:
+    Fictitious Play a remporté le vote 21 fois.
+    Stochastique expert a remporté le vote 3 fois.
+    Il y avait 6 fois où les deux stratégies ont eu le même score.
+
+10) Fictitious Play VS tétu:
+    Fictitious Play a remporté le vote 11 fois.
+    Tétu expert a remporté le vote 14 fois.
+    Il y avait 5 fois où les deux stratégies ont eu le même score.
+
+
 En observant ces résultats, on peut déduire que:
 
     - La stratégie tétu uniforme est meilleur que tétu aléatoire et donne de bons résultats contre les autres stratégies vu qu'elle distribue les militants d'une façon uniforme sur l'ensemble des élécteurs.
 
-    - La stratégie better response donne de bons résultats contre les stratégies stationnaire vu qu'elle prend l'historique de l'adversaire en compte.
+    - La stratégie better response donne de bons résultats contre les stratégies stationnaire et contre stochastique expert (car elle choisit une des stratégies stationnaires + better_response aléatirement) vu qu'elle prend l'historique de l'adversaire en compte.
 
-    -  
+    -La stratégie stochastique expert bat Fictitious play grace à l'aléatoire dans le choix du prochain coup (l'historique ne donne pas d'information sur les prochains coups de stochastique expert (imprévisible)). Fictitious play n'est plus performante quand l'aléatoire intervient.
+
+
+    

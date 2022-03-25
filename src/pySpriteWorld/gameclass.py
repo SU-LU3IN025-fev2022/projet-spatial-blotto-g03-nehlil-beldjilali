@@ -61,7 +61,7 @@ class Game(object):
         pygame.display.set_caption("pySpriteWorld Experiment")
         self.spriteBuilder.screen = self.screen
 
-        self.fps = 60
+        self.fps = 1000 #60
         self.frameskip = 0
         # converti les sprites meme format que l'ecran
         self.spriteBuilder.prepareSprites()

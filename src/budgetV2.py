@@ -57,6 +57,9 @@ def main():
 
     init()
 
+    # Affectation des militants sur les secteurs avec budget
+    # Deuxième variante des elections avec budget dans ce fichier
+
     # -------------------------------
     # Initialisation
     # -------------------------------
@@ -102,12 +105,9 @@ def main():
 
     # Structures utilisées
     objectifs = goalStates
-    nb_militants = len(initStates)
-    nb_milit_parti = nb_militants//2
-    nb_obj = len(objectifs)
+    nb_militants, nb_obj = len(initStates), len(objectifs)
     score = {1: 0, 2: 0}
-    strategy1 = [0 for k in range(nb_obj)] # liste pour sauvegarder la strategie précédente du parti 1
-    strategy2 = [0 for k in range(nb_obj)] # liste pour sauvegarder la strategie précédente du parti 2
+    strategy1, strategy2 = [0 for k in range(nb_obj)], [0 for k in range(nb_obj)]
     historique = {1:[], 2:[]}
 
     # -------------------------------
@@ -156,19 +156,35 @@ def main():
             newPos.append(pos_)
             if pos_ in objectifs: strategy[objectifs.index(pos_)]+=1
         return newPos, strategy
-    
+    # Choisir l'objectif le plus proche
+    # Pas plus de trois militants par secteur
+    def choose_nearest_obj(posPlayers):
+        new_objectifs, couts = [], []
+        strategy = [0 for k in range(nb_obj)]
+        for posPlayer in posPlayers:
+            pref = [cout_chemin(posPlayer, objectifs[x]) for x in range(nb_obj)]
+            sortedPref = np.argsort(pref)
+            for pos in sortedPref:
+                if strategy[pos]<3:
+                    new_objectifs.append(objectifs[pos])
+                    strategy[pos]+=1
+                    couts.append(pref[pos])
+                    break
+        return new_objectifs, strategy, couts
     # Nom de stratégies pour chaque parti
-    nom_str1, nom_str2 = "aleatoire avec budget", "aleatoire avec budget"
+    nom_str1, nom_str2 = "aleatoire avec budget v2", "aleatoire avec budget v2"
 
     NBJOURS = 20
-    BUDGET  = 18
+    budget1, budget2  = 0,0
     # Boucle principale des elections sur les jours
     for jour in range(NBJOURS):
-        # Initialisation des strateegies d'affectation
-        newPos1, strategy1 = strategy_with_budget(posPlayers[:7], BUDGET)
-        newPos2, strategy2 = strategy_with_budget(posPlayers[7:], BUDGET)
+        # Initialisation des strategies d'affectation
+        newPos1, strategy1, cout1 = choose_nearest_obj(posPlayers[:7])
+        newPos2, strategy2, cout2 = choose_nearest_obj(posPlayers[7:])
 
         obj_milit = newPos1 + newPos2
+        budget1 += sum(cout1)
+        budget2 += sum(cout2)
         
         # Sauvegarde de stratégies
         historique[1].append(strategy1)
@@ -178,27 +194,19 @@ def main():
             obj = obj_milit[militant]
             p = ProblemeGrid2D(posPlayers[militant], obj, g, 'manhattan')
             path = probleme.astar(p)
-            # -------------------------------
             # Boucle principale de déplacements
-            # -------------------------------
             for i in range(iterations):
                 # on fait bouger chaque joueur séquentiellement
-
-                # Joueur militant: suit son chemin trouve avec A*
-
                 row, col = path[i]
                 posPlayers[militant] = (row, col)
                 players[militant].set_rowcol(row, col)
-                #if (row, col) == objectifs[obj]:
                 if (row, col) == obj:
                     # Si nouvelle position alors la sauvegarder
                     posPlayers[militant] = (row, col)
                     break
-
                 # on passe a l'iteration suivante du jeu
                 # Pour affichage, décommentez l'instruction suivante
-                game.mainiteration()
-
+                # game.mainiteration()
         # pygame.quit()
 
         # Re-affectation des electeurs aléatoirement sur les secteurs
@@ -226,6 +234,10 @@ def main():
     print("strategie parti 1: {} - stratégie parti 2: {}".format(nom_str1,nom_str2))
     print("le score du parti 1 à la fin des elections: {}".format(score[1]))
     print("le score du parti 2 à la fin des elections: {}".format(score[2]))
+    print("---")
+    print("le budget du parti 1 à la fin des elections: {}".format(budget1))
+    print("le budget du parti 2 à la fin des elections: {}".format(budget2))
+    print("---")
     print("Le parti qui a emporté l'election : {}".format('1' if score[1] > score[2] else '2'))
 
 # Main

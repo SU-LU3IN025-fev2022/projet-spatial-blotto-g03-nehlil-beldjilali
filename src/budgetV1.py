@@ -80,7 +80,7 @@ def main():
 
     # on localise tous les secteurs d'interet (les votants)
     # sur le layer ramassable
-    # Retourne des couples (x,y) : positions des votants
+    # Retourne des couples (x,y) : bornes secteurs
     pos_secteurs = {0:[(1,3),(1,4)],1:[(1,3),(8,11)],2:[(1,3),(15,18)],
                 3:[(5,9),(1,4)],4:[(5,9),(15,18)],5:[(11,14),(1,4)],
                 6:[(11,14),(15,18)],7:[(16,18),(1,6)],8:[(16,18),(8,11)],
@@ -95,7 +95,6 @@ def main():
     # on localise tous les murs
     # sur le layer obstacle
     wallStates = [w.get_rowcol() for w in game.layers['obstacle']]
-    # print("Wall states:", wallStates)
 
     def legal_position(row, col):
         # une position legale est dans la carte et pas sur un mur
@@ -103,10 +102,9 @@ def main():
 
     # Structures utilisées
     objectifs = goalStates
-    nb_militants, nb_obj = len(initStates), len(objectifs)
+    nb_militants, nb_obj = len(initStates),len(objectifs)
     score = {1: 0, 2: 0}
-    strategy1 = [0 for k in range(nb_obj)] # liste pour sauvegarder la strategie précédente du parti 1
-    strategy2 = [0 for k in range(nb_obj)] # liste pour sauvegarder la strategie précédente du parti 2
+    strategy1, strategy2 = [0 for k in range(nb_obj)], [0 for k in range(nb_obj)]
     historique = {1:[], 2:[]}
 
     # -------------------------------
@@ -120,65 +118,104 @@ def main():
         g[w] = False
 
     posPlayers = initStates
-
+    # ---------------------------------------------------------------
+    # Fonctions de traitement du budget
+    # Budget fixe par militant (premiere variante)
+    # ---------------------------------------------------------------
+    # Re-affectation des electeurs aléatoirement sur les secteurs
+    def reaffect():
+        affec_alea,l = [],[]
+        l = random.sample(range(10), 5)
+        for el in l:
+            pos = pos_secteurs[el]
+            affec_alea.append((random.randint(pos[0][0],pos[0][1]), random.randint(pos[1][0],pos[1][1])))
+        s = 0
+        for o in game.layers['ramassable']:
+            row, col = affec_alea[s]
+            s+=1
+            o.set_rowcol(row, col)
+    # Calcule le cout pour se déplacer d'un point à un autre (avec astar)
+    def cout_chemin(posPlayer, posTarget):
+        p = ProblemeGrid2D(posPlayer, posTarget, g, 'manhattan')
+        path = probleme.astar(p)
+        return len(path)
+    # Choisit aleatoirement un electeur parmi les choix possible selon le budget du militant
+    def pick_from_possible_moves(myPosition, myBudget):
+        output = []
+        for obj in objectifs:
+            if cout_chemin(myPosition, obj)<=myBudget: output.append(obj)
+        return random.sample(output,1)[0] if len(output)!=0 else myPosition
+    # retourne une strategie aleatoire parmi les choix possibles des militants
+    # Si aucun déplacement n'est possible, ne changer pas de position
+    def strategy_with_budget(posPlayers, budget):
+        newPos, strategy = [], [0 for k in range(nb_obj)]
+        for pos in posPlayers:
+            pos_ = pick_from_possible_moves(pos, budget)
+            newPos.append(pos_)
+            if pos_ in objectifs: strategy[objectifs.index(pos_)]+=1
+        return newPos, strategy
+    
     # Nom de stratégies pour chaque parti
-    nom_str1, nom_str2 = "focus", "better_response"
+    nom_str1, nom_str2 = "aleatoire avec budget", "aleatoire avec budget"
+
     NBJOURS = 20
+    BUDGET  = 18
+
     # Boucle principale des elections sur les jours
     for jour in range(NBJOURS):
         # Initialisation des strateegies d'affectation
-        strategy1 = ut.prochainCoup(historique[1],historique[2],nom_str1)
-        strategy2 = ut.prochainCoup(historique[2],historique[1],nom_str2)
+        newPos1, strategy1 = strategy_with_budget(posPlayers[:7], BUDGET)
+        newPos2, strategy2 = strategy_with_budget(posPlayers[7:], BUDGET)
 
-        obj_milit = ut.str_to_obj(strategy1, nb_militants//2) +  ut.str_to_obj(strategy2, nb_militants//2)
+        obj_milit = newPos1 + newPos2
         
         # Sauvegarde de stratégies
-        historique[1].append(strategy1)
-        historique[2].append(strategy2)
-        # Mettre à jour la matrice des probabilités
-        ft.updateMatProba(historique[2][-1], jour+1)
-        if jour > 5: print(ft.fictitious(historique[1],historique[2]))
+        historique[1].append(strategy1), historique[2].append(strategy2)
         
         for militant in range(nb_militants):
             obj = obj_milit[militant]
-            p = ProblemeGrid2D(posPlayers[militant], objectifs[obj], g, 'manhattan')
+            p = ProblemeGrid2D(posPlayers[militant], obj, g, 'manhattan')
             path = probleme.astar(p)
             # -------------------------------
             # Boucle principale de déplacements
             # -------------------------------
             for i in range(iterations):
                 # on fait bouger chaque joueur séquentiellement
-
-                # Joueur militant: suit son chemin trouve avec A*
-
                 row, col = path[i]
                 posPlayers[militant] = (row, col)
                 players[militant].set_rowcol(row, col)
-                if (row, col) == objectifs[obj]:
+                if (row, col) == obj:
                     # Si nouvelle position alors la sauvegarder
                     posPlayers[militant] = (row, col)
                     break
                 # on passe a l'iteration suivante du jeu
-                #game.mainiteration()
+                # Pour affichage, décommentez l'instruction suivante
+                # game.mainiteration()
 
         # pygame.quit()
 
+        # Re-affectation des electeurs aléatoirement sur les secteurs
+        reaffect()
+        # Mise à jour des positions d'electeurs
+        objectifs = [o.get_rowcol() for o in game.layers['ramassable']]
+        
         # Calculer le score de chaque parti en ce jour
         score_parti1, score_parti2 = ut.calcul_score_jour(strategy1, strategy2)
         # Sauvegarder le score journalier de chaque parti
         score[1] += score_parti1
         score[2] += score_parti2
-        # Affichage de score et des strategies en fin de journée
+
+        # Affichage de score et des strategies à la fin de la journée
         print("-------------------------------------------------------------------------")
-        print("jour ", jour+1)
+        print("Jour ", jour+1)
         print("Strategie parti 1 ({}): {}".format(nom_str1,strategy1))
         print("Strategie parti 2 ({}): {}".format(nom_str2,strategy2))
         print("---")
         print("le score du parti 1 : {}".format(score_parti1))
         print("le score du parti 2 : {}".format(score_parti2))
         print("Le partie qui a emporté la journée {}: {}".format(jour+1, '1' if score_parti1 > score_parti2 else '2'))
-
-    # Affichage du score après la fin des elections
+    
+    # Affichage du score à la fin des elections
     print("-------------------------------------------------------------------------")
     print("strategie parti 1: {} - stratégie parti 2: {}".format(nom_str1,nom_str2))
     print("le score du parti 1 à la fin des elections: {}".format(score[1]))

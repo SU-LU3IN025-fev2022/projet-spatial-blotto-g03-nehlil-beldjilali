@@ -35,6 +35,10 @@ import fictitious as ft
 # ---- Main                ----
 # ---- ---- ---- ---- ---- ----
 
+# -----------------------------
+# A ignorer
+# -----------------------------
+
 game = Game()
 
 def init(_boardname=None):
@@ -56,10 +60,6 @@ def main():
     print(iterations)
 
     init()
-
-
-    # TO-DO
-    # Deuxième variante des elections avec budget dans ce fichier
 
     # -------------------------------
     # Initialisation
@@ -166,42 +166,51 @@ def main():
 
     NBJOURS = 20
     BUDGET  = 18
+
     # Boucle principale des elections sur les jours
     for jour in range(NBJOURS):
-        # Initialisation des strateegies d'affectation
+        # Initialisation des strategies d'affectation
         newPos1, strategy1 = strategy_with_budget(posPlayers[:7], BUDGET)
         newPos2, strategy2 = strategy_with_budget(posPlayers[7:], BUDGET)
 
         obj_milit = newPos1 + newPos2
-        
+        print(obj_milit)
         # Sauvegarde de stratégies
         historique[1].append(strategy1)
         historique[2].append(strategy2)
         
+        p_list, path_list = [], []
+        indexj1, indexj2 = 0, 1
+
+        for i in range(len(strategy1)):
+            for j in range(strategy1[i]):
+                p_list.append(ProblemeGrid2D(posPlayers[indexj1], objectifs[i], g, 'manhattan'))
+                indexj1+=2
+        for i in range(len(strategy2)):
+            for j in range(strategy2[i]):
+                p_list.append(ProblemeGrid2D(posPlayers[indexj2], objectifs[i], g, 'manhattan'))
+                indexj2+=2
+
         for militant in range(nb_militants):
-            obj = obj_milit[militant]
-            p = ProblemeGrid2D(posPlayers[militant], obj, g, 'manhattan')
-            path = probleme.astar(p)
+            path_list.append(probleme.astar(p_list[militant]))
+
             # -------------------------------
             # Boucle principale de déplacements
             # -------------------------------
+        for militant in range(nb_militants):
             for i in range(iterations):
                 # on fait bouger chaque joueur séquentiellement
-
-                # Joueur militant: suit son chemin trouve avec A*
-
-                row, col = path[i]
+                row, col = path_list[militant][i]
                 posPlayers[militant] = (row, col)
                 players[militant].set_rowcol(row, col)
-                #if (row, col) == objectifs[obj]:
-                if (row, col) == obj:
+                if (row, col) == path_list[militant][-1]:
                     # Si nouvelle position alors la sauvegarder
                     posPlayers[militant] = (row, col)
+                    game.mainiteration()
                     break
-
-                # on passe a l'iteration suivante du jeu
-                # Pour affichage, décommentez l'instruction suivante
-                # game.mainiteration()
+                    # on passe a l'iteration suivante du jeu
+                    # Pour affichage, décommentez l'instruction suivante
+                
 
         # pygame.quit()
 

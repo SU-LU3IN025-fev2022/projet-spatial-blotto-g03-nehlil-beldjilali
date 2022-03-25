@@ -127,7 +127,9 @@ def main():
     # Boucle principale des elections sur les jours
     for jour in range(NBJOURS):
         # Initialisation des strateegies d'affectation
-        strategy1 = ut.prochainCoup(historique[1],historique[2],nom_str1)
+        
+        if jour > 5: nom_str1, strategy1 =  ft.fictitious(historique[1],historique[2])
+        else : strategy1 = ut.prochainCoup(historique[1],historique[2],nom_str1)
         strategy2 = ut.prochainCoup(historique[2],historique[1],nom_str2)
 
         obj_milit = ut.str_to_obj(strategy1, nb_militants//2) +  ut.str_to_obj(strategy2, nb_militants//2)
@@ -137,7 +139,6 @@ def main():
         historique[2].append(strategy2)
         # Mettre à jour la matrice des probabilités
         ft.updateMatProba(historique[2][-1], jour+1)
-        if jour > 5: print(ft.fictitious(historique[1],historique[2]))
         
         for militant in range(nb_militants):
             obj = obj_milit[militant]

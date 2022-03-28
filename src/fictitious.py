@@ -5,12 +5,15 @@ nb_obj, nb_militants = 5, 7
 # Matrice des probabilités
 matProb = [[0 for x in range(nb_militants+1)] for y in range(nb_obj)]
 
+def init_mat_proba():
+    matProb = [[0 for x in range(nb_militants+1)] for y in range(nb_obj)]
+
 # Mettre à jour la matrice de probabilités
 def updateMatProba(strategy, jours_passes):
     for i in range(len(strategy)):
         j = strategy[i]
         p = matProb[i][j]*(jours_passes-1)
-        matProb[i][j] = (p+1)/jours_passes
+        matProb[i][j] = round((p+1)/jours_passes,2)
 
 # Calcul des gains esperes pour une strategie donnée maStrategy
 def gain_espere(maStrategy):

@@ -171,6 +171,7 @@ def main():
                     couts.append(pref[pos])
                     break
         return new_objectifs, strategy, couts
+
     # Nom de stratégies pour chaque parti
     nom_str1, nom_str2 = "aleatoire avec budget v2", "aleatoire avec budget v2"
 

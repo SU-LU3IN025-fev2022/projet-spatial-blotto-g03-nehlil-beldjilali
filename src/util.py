@@ -94,3 +94,5 @@ def prochainCoup(mesCoups,adversCoups,nom):
         strategy.append(aff+res)
         for i in range(nb_obj-secteurs): strategy.append(0)
         return strategy
+    else:
+        return []

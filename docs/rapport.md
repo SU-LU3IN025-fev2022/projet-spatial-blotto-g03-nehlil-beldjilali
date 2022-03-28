@@ -78,7 +78,7 @@ IV\ Dans le fichier budgetV2.py: Pour la deuxième variante:
 
 
 ## Description des résultats
-Pour évaluer les différentes stratégies, on organise des confrontations. On répète ldes campagnes de 20 jours 30 fois et on observe les réseultats.
+Pour évaluer les différentes stratégies, on organise des confrontations. On répète les campagnes de 20 jours 30 fois et on observe les réseultats obtenus.
 
 1) Tétu VS aléatoire: Sur les 30 campagnes:
     Tétu a remporté le vote 10 fois.
@@ -134,7 +134,7 @@ En observant ces résultats, on peut déduire que:
 
     - La stratégie better response donne de bons résultats contre les stratégies stationnaire et contre stochastique expert (car elle choisit une des stratégies stationnaires + better_response aléatirement) vu qu'elle prend l'historique de l'adversaire en compte.
 
-    -La stratégie stochastique expert bat Fictitious play grace à l'aléatoire dans le choix du prochain coup (l'historique ne donne pas d'information sur les prochains coups de stochastique expert (imprévisible)). Fictitious play n'est plus performante quand l'aléatoire intervient.
+    -La stratégie stochastique expert bat Fictitious play grace au choix aléatoire du prochain coup (l'historique ne donne pas d'information sur les prochains coups de stochastique expert (imprévisible)). Fictitious play n'est plus performante quand l'aléatoire intervient.
 
 
     

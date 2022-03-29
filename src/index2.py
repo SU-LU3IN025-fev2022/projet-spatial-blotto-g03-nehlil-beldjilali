@@ -25,7 +25,6 @@ from search.grid2D import ProblemeGrid2D
 from search import probleme
 
 import util as ut
-import fictitious as ft
 # ---- ---- ---- ---- ---- ----
 # ---- Misc                ----
 # ---- ---- ---- ---- ---- ----
@@ -80,12 +79,6 @@ def main():
 
     # on localise tous les secteurs d'interet (les votants)
     # sur le layer ramassable
-    # Retourne des couples (x,y) : positions des votants
-    pos_secteurs = {0:[(1,3),(1,4)],1:[(1,3),(8,11)],2:[(1,3),(15,18)],
-                3:[(5,9),(1,4)],4:[(5,9),(15,18)],5:[(11,14),(1,4)],
-                6:[(11,14),(15,18)],7:[(16,18),(1,6)],8:[(16,18),(8,11)],
-                9:[(16,18),(15,18)]}
-
     
     goalStates = [o.get_rowcol() for o in game.layers['ramassable']]
     print("Goal states:", goalStates)
@@ -108,7 +101,34 @@ def main():
     strategy1 = [0 for k in range(nb_obj)] # liste pour sauvegarder la strategie précédente du parti 1
     strategy2 = [0 for k in range(nb_obj)] # liste pour sauvegarder la strategie précédente du parti 2
     historique = {1:[], 2:[]}
+    matProb = [[0 for x in range(nb_militants//2+1)] for y in range(nb_obj)]
 
+    # Mettre à jour la matrice de probabilités
+    def updateMatProba(strategy, jours_passes):
+        for i in range(len(strategy)):
+            j = strategy[i]
+            p = matProb[i][j]*(jours_passes-1)
+            matProb[i][j] = round((p+1)/jours_passes,2)
+
+    # Calcul des gains esperes pour une strategie donnée maStrategy
+    def gain_espere(maStrategy):
+        gains = []
+        for electeur in range(nb_obj):
+            gain = 0
+            monCoup = maStrategy[electeur]
+            for j in range(0, monCoup+1): 
+                gain += matProb[electeur][j]
+            gains.append(round(gain, 2))
+        return gains
+        
+    # Implementation de l'algorithme par apprentissage fictitious play
+    def fictitious(mesCoups,adversCoups):
+        possible_strategies, gains = [], []
+        for nom_str in ut.STRATEGIES:
+            strategy = ut.prochainCoup(mesCoups,adversCoups,nom_str)
+            possible_strategies.append(strategy)
+            gains.append(sum(gain_espere(strategy)))
+        return ut.STRATEGIES[np.argmax(gains)], possible_strategies[np.argmax(gains)]
     # -------------------------------
     # Carte demo
     # Tous les joueurs exécutent A*
@@ -121,25 +141,27 @@ def main():
 
     posPlayers = initStates
 
-    # STRATEGIES = ["tetu_uniform", "focus", "tetu", "better_response","aleatoire","titfortat"]
-    # Nom de stratégies pour chaque parti (cas de strategies fixes durant toute l'élection)
-    nom_str1, nom_str2 = "tetu", "tetu_uniform"
-    
-    NBJOURS = 20
+    # Nom de stratégies pour chaque parti
+    # nom_str1, nom_str2 = "aleatoire", "tetu_uniform"
+    nom_str2 = "aleatoire"
+    NBJOURS = 30
     # Boucle principale des elections sur les jours
     for jour in range(NBJOURS):
         # Initialisation des strateegies d'affectation
-        strategy1 = ut.prochainCoup(historique[1],historique[2],nom_str1)
+        if jour > 5: nom_str1, strategy1 =  fictitious(historique[1],historique[2])
+        else : 
+            nom_str1 = "aleatoire"
+            strategy1 = ut.prochainCoup(historique[1],historique[2],nom_str1)
         strategy2 = ut.prochainCoup(historique[2],historique[1],nom_str2)
 
         obj_milit = ut.str_to_obj(strategy1, nb_militants//2) +  ut.str_to_obj(strategy2, nb_militants//2)
-        
+
         # Sauvegarde de stratégies
         historique[1].append(strategy1)
         historique[2].append(strategy2)
         # Mettre à jour la matrice des probabilités
-        ft.updateMatProba(historique[2][-1], jour+1)
-        
+        updateMatProba(strategy2, jour+1)
+        # print("Matrice de probabilités :",matProb)
         for militant in range(nb_militants):
             obj = obj_milit[militant]
             p = ProblemeGrid2D(posPlayers[militant], objectifs[obj], g, 'manhattan')

@@ -24,6 +24,7 @@ import pySpriteWorld.glo
 from search.grid2D import ProblemeGrid2D
 from search import probleme
 
+import fictitious as ft
 import util as ut
 # ---- ---- ---- ---- ---- ----
 # ---- Misc                ----
@@ -101,34 +102,7 @@ def main():
     strategy1 = [0 for k in range(nb_obj)] # liste pour sauvegarder la strategie précédente du parti 1
     strategy2 = [0 for k in range(nb_obj)] # liste pour sauvegarder la strategie précédente du parti 2
     historique = {1:[], 2:[]}
-    matProb = [[0 for x in range(nb_militants//2+1)] for y in range(nb_obj)]
-
-    # Mettre à jour la matrice de probabilités
-    def updateMatProba(strategy, jours_passes):
-        for i in range(len(strategy)):
-            j = strategy[i]
-            p = matProb[i][j]*(jours_passes-1)
-            matProb[i][j] = round((p+1)/jours_passes,2)
-
-    # Calcul des gains esperes pour une strategie donnée maStrategy
-    def gain_espere(maStrategy):
-        gains = []
-        for electeur in range(nb_obj):
-            gain = 0
-            monCoup = maStrategy[electeur]
-            for j in range(0, monCoup+1): 
-                gain += matProb[electeur][j]
-            gains.append(round(gain, 2))
-        return gains
-        
-    # Implementation de l'algorithme par apprentissage fictitious play
-    def fictitious(mesCoups,adversCoups):
-        possible_strategies, gains = [], []
-        for nom_str in ut.STRATEGIES:
-            strategy = ut.prochainCoup(mesCoups,adversCoups,nom_str)
-            possible_strategies.append(strategy)
-            gains.append(sum(gain_espere(strategy)))
-        return ut.STRATEGIES[np.argmax(gains)], possible_strategies[np.argmax(gains)]
+    
     # -------------------------------
     # Carte demo
     # Tous les joueurs exécutent A*
@@ -143,16 +117,18 @@ def main():
 
     # Nom de stratégies pour chaque parti
     # nom_str1, nom_str2 = "aleatoire", "tetu_uniform"
-    nom_str2 = "aleatoire"
-    NBJOURS = 30
+    nom_str2 = "tetu"
+    ft.init_mat_proba()
+    NBJOURS = 10
     # Boucle principale des elections sur les jours
     for jour in range(NBJOURS):
         # Initialisation des strateegies d'affectation
-        if jour > 5: nom_str1, strategy1 =  fictitious(historique[1],historique[2])
+        if jour > 5: nom_str1, strategy1 =  ft.fictitious(historique[1],historique[2])
         else : 
-            nom_str1 = "aleatoire"
+            nom_str1 = "affect_uniform"
             strategy1 = ut.prochainCoup(historique[1],historique[2],nom_str1)
-        strategy2 = ut.prochainCoup(historique[2],historique[1],nom_str2)
+        # strategy2 = ut.prochainCoup(historique[2],historique[1],nom_str2)
+        strategy2 = [1,0,4,2,0]
 
         obj_milit = ut.str_to_obj(strategy1, nb_militants//2) +  ut.str_to_obj(strategy2, nb_militants//2)
 
@@ -160,8 +136,8 @@ def main():
         historique[1].append(strategy1)
         historique[2].append(strategy2)
         # Mettre à jour la matrice des probabilités
-        updateMatProba(strategy2, jour+1)
-        # print("Matrice de probabilités :",matProb)
+        ft.updateMatProba(strategy2, jour+1)
+        print("Matrice de probabilités :",ft.matProb)
         for militant in range(nb_militants):
             obj = obj_milit[militant]
             p = ProblemeGrid2D(posPlayers[militant], objectifs[obj], g, 'manhattan')

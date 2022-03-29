@@ -21,7 +21,7 @@ def gain_espere(maStrategy):
     for electeur in range(nb_obj):
         gain = 0
         monCoup = maStrategy[electeur]
-        for j in range(0, monCoup+1): 
+        for j in range(0, monCoup): 
             gain += matProb[electeur][j]
         gains.append(round(gain, 2))
     return gains
@@ -32,5 +32,6 @@ def fictitious(mesCoups,adversCoups):
     for nom_str in ut.STRATEGIES:
         strategy = ut.prochainCoup(mesCoups,adversCoups,nom_str)
         possible_strategies.append(strategy)
+        print(nom_str, gain_espere(strategy))
         gains.append(sum(gain_espere(strategy)))
     return ut.STRATEGIES[np.argmax(gains)], possible_strategies[np.argmax(gains)]

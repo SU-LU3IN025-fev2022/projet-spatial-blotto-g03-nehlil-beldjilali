@@ -3,8 +3,7 @@ import numpy as np
 from math import *
 import itertools
 
-STRATEGIES = ["tetu_uniform", "focus", "tetu",
-              "better_response", "aleatoire", "titfortat", "best_response"]
+STRATEGIES = ["affect_uniform", "focus", "better_response", "aleatoire", "titfortat", "best_response"]
 nb_obj, nb_militants = 5, 7
 
 # Génère aléatoirement une stratégie pour un parti donné
@@ -91,11 +90,8 @@ def prochainCoup(mesCoups, adversCoups, nom):
         else:
             return mesCoups[-1]
 
-    if nom == 'tetu_uniform':
-        if len(mesCoups) == 0:
-            return init_uniform(nb_obj, nb_militants)
-        else:
-            return mesCoups[-1]
+    if nom == 'affect_uniform':
+        return init_uniform(nb_obj, nb_militants)
 
     if nom == 'titfortat':
         if adversCoups == []:

@@ -123,12 +123,13 @@ def main():
 
     # STRATEGIES = ["aleatoire","tetu","tetu_uniform","focus","better_response","best_response","titfortat"]
     # Nom de stratégies pour chaque parti (cas de strategies fixes durant toute l'élection)
-    nom_str1, nom_str2 = "best_response", "tetu_uniform"
+    nom_str1, nom_str2 = "better_response", "tetu"
     
     NBJOURS = 20
     # Boucle principale des elections sur les jours
     for jour in range(NBJOURS):
         # Initialisation des strateegies d'affectation
+        # nom_str2 = ut.stochastique_expert()
         strategy1 = ut.prochainCoup(historique[1],historique[2],nom_str1)
         strategy2 = ut.prochainCoup(historique[2],historique[1],nom_str2)
 

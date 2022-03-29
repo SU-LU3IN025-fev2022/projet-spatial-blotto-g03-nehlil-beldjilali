@@ -125,10 +125,9 @@ def main():
         # Initialisation des strateegies d'affectation
         if jour > 5: nom_str1, strategy1 =  ft.fictitious(historique[1],historique[2])
         else : 
-            nom_str1 = "affect_uniform"
+            nom_str1 = "aleatoire"
             strategy1 = ut.prochainCoup(historique[1],historique[2],nom_str1)
-        # strategy2 = ut.prochainCoup(historique[2],historique[1],nom_str2)
-        strategy2 = [1,0,4,2,0]
+        strategy2 = ut.prochainCoup(historique[2],historique[1],nom_str2)
 
         obj_milit = ut.str_to_obj(strategy1, nb_militants//2) +  ut.str_to_obj(strategy2, nb_militants//2)
 

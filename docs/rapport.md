@@ -20,7 +20,7 @@ I\ Dans le module util.py:
 
     4) stochastique_expert(): Choisit aléatoirement une startégie parmis celles impléméntées en utilisant la fonction random.choice().
 
-    5) prochainCoup(mesCoups,adversCoups,nom): Retourne le prochaine coup (stratégie) pour un partie étant donnés l'historique des stratégies utilisées par le parti et l'historique du parti adversaire et le nom de la stratégie. Les coups possibles sont: aleatoire qui utilise la fonction init_alea_parti, tetu qui commence par une stratégie aléatoire et la répète jusqu'à la fin du jeu, tetu uniforme qui donne toujours une affectation uniforme via la fonction init_uniform, titfortat qui retourne la dernière stratégie jouée par l'adversaire, better_response qui fourni une meilleur réponse par rapport au dernier coup joué par l'adversaire, focus qui affecte le plus grand nombre possible de militants à la moitié des élécteurs et aucun militant à l'autre moitié et best_response qui retourne la meilleur stratégie en réponse au dernier coup de l'adversaire.
+    5) prochainCoup(mesCoups,adversCoups,nom): Retourne le prochaine coup (stratégie) pour un partie étant donnés l'historique des stratégies utilisées par le parti et l'historique du parti adversaire et le nom de la stratégie. Les coups possibles sont: aleatoire qui utilise la fonction init_alea_parti, tetu qui commence par une stratégie aléatoire et la répète jusqu'à la fin du jeu, affect_uniforme qui donne toujours une affectation uniforme via la fonction init_uniform, titfortat qui retourne la dernière stratégie jouée par l'adversaire, better_response qui fourni une meilleur réponse par rapport au dernier coup joué par l'adversaire, focus qui affecte le plus grand nombre possible de militants à la moitié des élécteurs et aucun militant à l'autre moitié et best_response qui retourne la meilleur stratégie en réponse au dernier coup de l'adversaire.
     Explication des stratégies better_response, focus et best_response:
 
     *** Stratégie better_response: L'idée de cette stratégie est celle vue en TD c.à.d: On prend la moitié des secteurs auxquels l'adversaire a envoyé le plus de militants dan son coup précédent et on n'y envoie aucun militant. Et on envoie le plus de militants possibles (au moins un de plus que l'adversaire) aux secteurs auxquels l'adversaire a envoyé le moins de militants dans son coup précédent. 
@@ -46,7 +46,7 @@ II\ Dans le module fictitious.py:
     Ce qui se traduit par:
     - Pour le secteur 0: Il y a une probabilité de 10% que l'adversaire n'affecte aucun militant à cet élécteur et un probabilité de 90% qu'il lui affecte 1 militant.
     - Pour le secteur 1: Il y a une probabilité de 10% que l'adversaire affecte 1 militant à cet élécteur et un probabilité de 10% qu'il lui affecte 2 militants et une probabilité de 80% qu'il lui affecte 3 militants.
-    Si maStartegy = (1, 2) alors le gain espéré est: (0.1*1 + 0.9*1) pour le secteur 0 car 1 > 0 et 1 >= 1 et (0 * 1 + 0.1*1 + 0.1*1) pour le secteur 1 car 2 > 0 et 2 > 1 et 2 >= 2. La fonction retourne le vecteur des gains. 
+    Si maStartegy = (1, 2) alors le gain espéré est: (0.1*0 + 0.9*1) pour le secteur 0 car 1 > 0 et 1 >= 1 et (0 * 1 + 0.1*1 + 0.1*0) pour le secteur 1 car 2 > 0 et 2 > 1 et 2 >= 2. La fonction retourne le vecteur des gains. 
 
     3) fictitious(mesCoups,adversCoups): Cette fonctionne utilise la fonction gain_espere pour calculer le gain total (somme des gains dans le vecteur retourné par gain_espere) de chacune des stratégies possibles pour le joueur (celles présentes dans util.py) et choisit celle qui fournit le meilleur gain (max).
 
@@ -103,12 +103,14 @@ Pour évaluer les différentes stratégies, on organise des confrontations. On r
     Il y avait 5 fois où les deux stratégies ont eu le même score.
 
 5) Fictitious Play VS better response:
-    Better response a gagné 30 fois sur 30 (100%).
+    Fictitious Play a remporté le vote 12 fois.
+    Better response a remporté le vote 14 fois.
+    Les deux stratégies ont eu le même score 4 fois.
 
 6) Fictitious Play VS stochastique expert:
-    Fictitious Play a remporté le vote 8 fois.
-    Stochastique expert a remporté le vote 21 fois.
-    Les deux stratégies ont eu le même score une seule fois.
+    Fictitious Play a remporté le vote 10 fois.
+    Stochastique expert a remporté le vote 12 fois.
+    Les deux stratégies ont eu le même score 8 fois.
 
 7) Better response VS stochastique expert:
     Better response a remporté le vote 27 fois.
@@ -120,21 +122,23 @@ Pour évaluer les différentes stratégies, on organise des confrontations. On r
     Il y avait 6 fois où les deux stratégies ont eu le même score.
 
 9) Fictitious Play VS aléatoire:
-    Fictitious Play a remporté le vote 21 fois.
-    Stochastique expert a remporté le vote 3 fois.
-    Il y avait 6 fois où les deux stratégies ont eu le même score.
+    Fictitious Play a remporté le vote 15 fois.
+    Stochastique expert a remporté le vote 10 fois.
+    Il y avait 5 fois où les deux stratégies ont eu le même score.
 
 10) Fictitious Play VS tétu:
-    Fictitious Play a remporté le vote 11 fois.
-    Tétu expert a remporté le vote 14 fois.
-    Il y avait 5 fois où les deux stratégies ont eu le même score.
+    Fictitious Play a remporté le vote 30 fois (100%).
+
+11) Best response VS stochastique expert:
+    Best response a remporté le vote 5 fois.
+    Stochastique expert a remporté le vote 25 fois.
 
 
 En observant ces résultats, on peut déduire que:
 
-    - La stratégie tétu uniforme est meilleur que tétu aléatoire et donne de bons résultats contre les autres stratégies vu qu'elle distribue les militants d'une façon uniforme sur l'ensemble des élécteurs.
+    - La stratégie affect_uniforme est meilleur que tétu aléatoire et donne de bons résultats contre les autres stratégies vu qu'elle distribue les militants d'une façon uniforme sur l'ensemble des élécteurs.
 
-    - La stratégie better response donne de bons résultats contre les stratégies stationnaire et contre stochastique expert (car elle choisit une des stratégies stationnaires + better_response aléatirement) vu qu'elle prend l'historique de l'adversaire en compte.
+    - La stratégie better response donne de bons résultats contre les stratégies stationnaire et contre stochastique expert (car elle choisit une des stratégies stationnaires + better_response aléatoirement) vu qu'elle prend l'historique de l'adversaire en compte (dernier coup joué).
 
     -La stratégie stochastique expert bat Fictitious play grace au choix aléatoire du prochain coup (l'historique ne donne pas d'information sur les prochains coups de stochastique expert (imprévisible)). Fictitious play n'est plus performante quand l'aléatoire intervient.
 
